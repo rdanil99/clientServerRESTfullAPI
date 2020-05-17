@@ -1,19 +1,38 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import Authentication from './src/screens/authentication/Authentication';
+import { AuthContext } from './src/utils/context';
+import Home from './src/screens/home/HomePage';
+
+const AuthStack = createStackNavigator();
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
-}
+	const [token, setToken] = React.useState(null);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+	const authContext = React.useMemo(() => {
+		return {
+			singIn: () => setToken('asd'),
+			singUp: () => setToken('asd'),
+			singOut: () => setToken(null),
+		};
+	}, []);
+	return (
+		<AuthContext.Provider value={authContext}>
+			<NavigationContainer>
+				<AuthStack.Navigator headerMode="none">
+					{token ? (
+						<AuthStack.Screen name="HomePage" component={Home} />
+					) : (
+						<AuthStack.Screen
+							name="Authentication"
+							component={Authentication}
+						/>
+					)}
+				</AuthStack.Navigator>
+			</NavigationContainer>
+		</AuthContext.Provider>
+	);
+}
